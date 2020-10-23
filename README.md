@@ -4,7 +4,7 @@ Validates `XML` documents against a W3C XML Schema (`XSD`).
 
 ## Building
 
-> On Linux
+> On POSIX
 
 ```sh
 git submodule update --init --recursive
@@ -19,33 +19,24 @@ In the meantime, read `emmake.sh` and replicate what it does. Sorry.
 
 ## Usage
 
+Instantiate a WebWorker for validating against your schemas like so:
+
 ```js
-createModule().then(mod => {
-  init = mod.cwrap('init', null, ['string', 'number', 'string']);
-  cvalidate = mod.cwrap('validate', 'number', ['string', 'string']);
-
-  reset = () => {
-    mod['warn'] = '';
-    mod['error'] = '';
-  }
-
-  validate = (content, name) => {
-    code = cvalidate(content, name);
-    warnings = mod['warn'].split('\n').filter(s => s.length > 0);
-    errors = mod['error'].split('\n').filter(s => s.length > 0);
-    valid = code === 0;
-    reset();
-    return {valid, warnings, errors, code};
-  }
-
-  init(XSD_content, XSD_content.length, "XSD_name.xsd");
-
-  result = validate(XML_content, "XML_name.xml")
-})
+if (window.Worker) {
+  const worker = new Worker('worker.js');
+  worker.onmessage = e => {
+    if (e.data === 'ready') { // libxml2 is loaded, we can load schemas now
+      worker.postMessage({ content: xsd_content, name: "filename.xsd" });
+      // a filename ending in ".xsd" tells the worker to load the schema
+    } else if (e.data.file === "filename.xsd" && e.data.loaded) {
+      worker.postMessage({ content: xml_content, name: "filename.xml" });
+      // a filename not ending in ".xsd" tells the worker to validate
+    } else if (e.data.file === "filename.xml") { // respond to errors
+      console.log(e.data);
+    }
+  };
+}
 ```
-
-I'll put all this housekeeping stuff in a `post.js` file so you don't have to.
-Promise.
 
 ## Dependency
 Emscripten

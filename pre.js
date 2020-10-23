@@ -1,8 +1,11 @@
-Module['warn'] = '';
 Module['print'] = function(text) {
-  Module['warn'] += text + '\n';
+  try {
+    postMessage(JSON.parse(text));
+  } catch (e) {
+    console.error(e);
+    postMessage(text);
+  }
 };
-Module['error'] = '';
 Module['printErr'] = function(text) {
-  Module['error'] += text + '\n';
+  postMessage(text);
 };
