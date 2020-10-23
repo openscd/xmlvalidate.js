@@ -13,8 +13,34 @@ git submodule update --init --recursive
 
 > On different OSes
 
-We'll add a description how to bulid soon.
-In the meantime, read `emmake.sh` and replicate what it does. Sorry.
+This is what `emmake.sh` does for you on POSIX:
+
+1. *copy* `xmlvalidate.c` into the `./libxml2` directory
+2. *change working directory* to `./libxml2`
+3. *patch* `Makefile.am` to include `xmlvalidate.c` in its `libxml2_la_SOURCES`
+4. *execute* `./autogen.sh` if `./configure` does not exist (on the first run)
+5. `emconfigure ./configure --with-minimum --with-schemas --disable-shared`
+6. `emmake make`
+7. *compile* the new object file `xmlvalidate.o` to `xmlvalidate.js`:
+   
+   ```sh
+   OBJECTS="SAX.o entities.o encoding.o error.o parserInternals.o  \
+       parser.o tree.o hash.o list.o xmlIO.o xmlmemory.o uri.o  \
+       valid.o xlink.o HTMLparser.o HTMLtree.o debugXML.o xpath.o  \
+       xpointer.o xinclude.o nanohttp.o nanoftp.o \
+       catalog.o globals.o threads.o c14n.o xmlstring.o buf.o \
+       xmlregexp.o xmlschemas.o xmlschemastypes.o xmlunicode.o \
+       xmlreader.o relaxng.o dict.o SAX2.o \
+       xmlwriter.o legacy.o chvalid.o pattern.o xmlsave.o \
+       xmlmodule.o schematron.o xzlib.o"
+
+   emcc -Os xmlvalidate.o $OBJECTS -o xmlvalidate.js -s EXPORTED_FUNCTIONS='["_validate", "_init"]' -s EXPORTED_RUNTIME_METHODS='["cwrap"]' -s 'ENVIRONMENT=web,worker' --pre-js ../pre.js --post-js ../post.js
+   ```
+8. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../`
+9. *change working directory* to `..`
+
+Replicate these steps manually in order to compile `xmlvalidate.js` on a
+non-POSIX-compliant operating system.
 
 
 ## Usage
