@@ -1,47 +1,64 @@
 #include <stdio.h>
+#include <string.h>
+#include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xmlschemas.h>
 
 static xmlSchemaPtr wxschemas = NULL;
-static char *schemaname = "unknown.xsd";
 static int options = XML_PARSE_COMPACT | XML_PARSE_BIG_LINES;
 
-void printError(void *ctx ATTRIBUTE_UNUSED, const char *msg, ...) {
-  va_list args;
-  va_start(args, msg);
-  vfprintf(stderr, msg, args);
-  va_end(args);
+char *removeFinalNewline(char *str) {
+  if (str == NULL) return str;
+  int length = strlen(str);
+  if (str[length-1] == '\n') str[length-1]  = '\0';
+  return str;
 }
 
-void printWarning(void *ctx ATTRIBUTE_UNUSED, const char *msg, ...) {
-  va_list args;
-  va_start(args, msg);
-  vfprintf(stdout, msg, args);
-  va_end(args);
+void printError(void *userData, xmlErrorPtr error) {
+  xmlNode *node = error->node;
+  char *tag = "";
+  if (node) tag = node->name;
+  char *file = error->file;
+  if (!file) file = "";
+  char *part = error->str1;
+  if (!part) part = "";
+  int line = error->line;
+  if (!line) line = xmlGetLineNo(node);
+  int column = error->int2;
+  if (!column) column = -1;
+
+  fprintf(stdout,
+      "{\"code\":%d,\"message\":\"%s\",\"level\":%d,\"node\":\"%s\","
+      "\"file\":\"%s\",\"line\":%d,\"column\":%d,\"part\":\"%s\"}\n",
+      error->code, removeFinalNewline(error->message), error->level, tag,
+      file, line, column, part);
 }
 
-void init(const char *schemas, int size, const char *filename) {
+int init(const char *schemas, int size, const char *filename) {
   xmlSchemaParserCtxtPtr ctxt = xmlSchemaNewMemParserCtxt(schemas, size);
-  xmlSchemaSetParserErrors(ctxt, printError, printWarning, NULL);
+  xmlSchemaSetParserStructuredErrors(ctxt, printError, NULL);
+  xmlSetStructuredErrorFunc(ctxt, printError);
 
   wxschemas = xmlSchemaParse(ctxt);
 
-  if (wxschemas == NULL) printError(NULL, "%s failed to compile\n", filename);
-  else schemaname = filename;
+  if (wxschemas == NULL) fprintf(stderr, "%s failed to compile\n", filename);
 
   xmlSchemaFreeParserCtxt(ctxt);
+  return (wxschemas == NULL) ? -1 : 0;
 }
 
 int validate(const xmlChar *document, const char *filename) {
-  if (wxschemas == NULL) printWarning(NULL, "No schema compiled\n");
+  if (wxschemas == NULL) {
+    fprintf(stderr, "No schema compiled\n");
+    return -1;
+  }
   xmlSchemaValidCtxtPtr vctxt = xmlSchemaNewValidCtxt(wxschemas);
-  xmlSchemaSetValidErrors(vctxt, printError, printWarning, NULL);
-  xmlSchemaValidateSetFilename(vctxt, schemaname);
+  xmlSchemaSetValidStructuredErrors(vctxt, printError, NULL);
+  xmlSetStructuredErrorFunc(vctxt, printError);
+  xmlSchemaValidateSetFilename(vctxt, filename);
 
   xmlDocPtr doc = xmlReadDoc(document, filename, NULL, options);
   int ret = xmlSchemaValidateDoc(vctxt, doc);
-
-  if (ret < 0) fprintf(stderr, "%s validation: internal error\n", filename);
 
   xmlSchemaFreeValidCtxt(vctxt);
   return ret;
