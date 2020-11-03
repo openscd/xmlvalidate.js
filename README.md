@@ -34,7 +34,11 @@ This is what `emmake.sh` does for you on POSIX:
        xmlwriter.o legacy.o chvalid.o pattern.o xmlsave.o \
        xmlmodule.o schematron.o xzlib.o"
 
-   emcc -Os xmlvalidate.o $OBJECTS -o xmlvalidate.js -s EXPORTED_FUNCTIONS='["_validate", "_init"]' -s EXPORTED_RUNTIME_METHODS='["cwrap"]' -s 'ENVIRONMENT=web,worker' --pre-js ../pre.js --post-js ../post.js
+   emcc -Os xmlvalidate.o $OBJECTS -o xmlvalidate.js \
+   -s EXPORTED_FUNCTIONS='["_validate", "_init"]' \
+   -s EXPORTED_RUNTIME_METHODS='["cwrap"]' \
+   -s 'ENVIRONMENT=web,worker' \
+   --pre-js ../pre.js --post-js ../post.js
    ```
 8. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../`
 9. *change working directory* to `..`
