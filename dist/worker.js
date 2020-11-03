@@ -1,10 +1,9 @@
 importScripts('xmlvalidate.js');
 
-Module.ready.then(mod => {
-  postMessage('ready');
-  onmessage = e => {
+onmessage = e => {
+  Module.ready.then(mod => {
     if (e.data.name.toLowerCase().endsWith('.xsd'))
       mod.init(e.data.content, e.data.name);
-    else mod.validate(e.data.content, e.data.name)
-  };
-})
+    else mod.validate(e.data.content, e.data.name);
+  });
+};
