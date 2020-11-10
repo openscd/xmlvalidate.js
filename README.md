@@ -11,7 +11,7 @@ git submodule update --init --recursive
 ./emmake.sh
 ```
 
-> On different OSes
+> On other OSs
 
 This is what `emmake.sh` does for you on POSIX:
 
@@ -35,6 +35,7 @@ This is what `emmake.sh` does for you on POSIX:
        xmlmodule.o schematron.o xzlib.o"
 
    emcc -Os xmlvalidate.o $OBJECTS -o xmlvalidate.js \
+   -s ALLOW_MEMORY_GROWTH=1 \
    -s EXPORTED_FUNCTIONS='["_validate", "_init"]' \
    -s EXPORTED_RUNTIME_METHODS='["cwrap"]' \
    -s 'ENVIRONMENT=web,worker' \
@@ -45,7 +46,6 @@ This is what `emmake.sh` does for you on POSIX:
 
 Replicate these steps manually in order to compile `xmlvalidate.js` on a
 non-POSIX-compliant operating system.
-
 
 ## Usage
 
@@ -69,7 +69,7 @@ if (window.Worker) {
 ```
 
 ## Dependency
-Emscripten
+[Emscripten](https://emscripten.org/)
 
 ## License
 Apache 2.0
