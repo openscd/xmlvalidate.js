@@ -73,3 +73,5 @@ if (window.Worker) {
 
 ## License
 Apache 2.0
+
+&copy; 2020 OMICRON electronics GmbH
