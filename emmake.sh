@@ -5,8 +5,7 @@ cp xmlvalidate.c libxml2
 cd libxml2
 
 patch -N < ../Makefile.am.patch
-[ -f ./configure ] || ./autogen.sh
-emconfigure ./configure --with-minimum --with-schemas --disable-shared
+[ -f ./Makefile ] || emconfigure ./autogen.sh --with-minimum --with-schemas --disable-shared
 emmake make
 
 OBJECTS="SAX.o entities.o encoding.o error.o parserInternals.o  \
