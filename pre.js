@@ -1,6 +1,6 @@
 Module['print'] = function(text) {
   try {
-    postMessage(JSON.parse(text.replace('\\','\\\\')));
+    postMessage(JSON.parse(text.replace(/\\/g,'\\\\')));
   } catch (e) {
     console.error(e);
     postMessage(text);
