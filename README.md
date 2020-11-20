@@ -19,6 +19,7 @@ This is what `emmake.sh` does for you on POSIX:
 2. *change working directory* to `./libxml2`
 3. *patch* `Makefile.am` to include `xmlvalidate.c` in its `libxml2_la_SOURCES`
 4. `emconfigure ./autogen.sh --with-minimum --with-schemas --disable-shared`
+
    If your system does not provide a Bourne shell, consider using
    `autoreconf --install` in place of `./autogen.sh` and crossing your fingers.
 5. `emmake make`
