@@ -18,10 +18,11 @@ This is what `emmake.sh` does for you on POSIX:
 1. *copy* `xmlvalidate.c` into the `./libxml2` directory
 2. *change working directory* to `./libxml2`
 3. *patch* `Makefile.am` to include `xmlvalidate.c` in its `libxml2_la_SOURCES`
-4. *execute* `./autogen.sh` if `./configure` does not exist (on the first run)
-5. `emconfigure ./configure --with-minimum --with-schemas --disable-shared`
-6. `emmake make`
-7. *compile* the new object file `xmlvalidate.o` to `xmlvalidate.js`:
+4. `emconfigure ./autogen.sh --with-minimum --with-schemas --disable-shared`
+   If your system does not provide a Bourne shell, consider using
+   `autoreconf --install` in place of `./autogen.sh` and crossing your fingers.
+5. `emmake make`
+6. *compile* the new object file `xmlvalidate.o` to `xmlvalidate.js`:
    
    ```sh
    OBJECTS="SAX.o entities.o encoding.o error.o parserInternals.o  \
@@ -41,8 +42,8 @@ This is what `emmake.sh` does for you on POSIX:
    -s 'ENVIRONMENT=worker' \
    --pre-js ../pre.js --post-js ../post.js
    ```
-8. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../dist/`
-9. *change working directory* to `..`
+7. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../dist/`
+8. *change working directory* to `..`
 
 Replicate these steps manually in order to compile `xmlvalidate.js` on a
 non-POSIX-compliant operating system.
