@@ -41,7 +41,7 @@ This is what `emmake.sh` does for you on POSIX:
    -s 'ENVIRONMENT=web,worker' \
    --pre-js ../pre.js --post-js ../post.js
    ```
-8. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../`
+8. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../dist/`
 9. *change working directory* to `..`
 
 Replicate these steps manually in order to compile `xmlvalidate.js` on a
@@ -54,11 +54,11 @@ Instantiate a WebWorker for validating against your schemas like so:
 ```js
 if (window.Worker) {
   const worker = new Worker('worker.js');
+  worker.postMessage({ content: xsd_content, name: "filename.xsd" });
+  // a filename ending in ".xsd" tells the worker to load the schema
   worker.onmessage = e => {
-    if (e.data === 'ready') { // libxml2 is loaded, we can load schemas now
-      worker.postMessage({ content: xsd_content, name: "filename.xsd" });
-      // a filename ending in ".xsd" tells the worker to load the schema
-    } else if (e.data.file === "filename.xsd" && e.data.loaded) {
+    if (e.data.file === "filename.xsd" && e.data.loaded) {
+      // our schema has been parsed and loaded
       worker.postMessage({ content: xml_content, name: "filename.xml" });
       // a filename not ending in ".xsd" tells the worker to validate
     } else if (e.data.file === "filename.xml") { // respond to errors
