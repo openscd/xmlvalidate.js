@@ -38,7 +38,7 @@ This is what `emmake.sh` does for you on POSIX:
    -s ALLOW_MEMORY_GROWTH=1 \
    -s EXPORTED_FUNCTIONS='["_validate", "_init"]' \
    -s EXPORTED_RUNTIME_METHODS='["cwrap"]' \
-   -s 'ENVIRONMENT=web,worker' \
+   -s 'ENVIRONMENT=worker' \
    --pre-js ../pre.js --post-js ../post.js
    ```
 8. *move* the resulting `xmlvalidate.wasm` and `xlvalidate.js` to `../dist/`
