@@ -1,6 +1,6 @@
 # xmlvalidate.js
 
-Validates `XML` documents against a W3C XML Schema (`XSD`).
+Validates `XML` documents against a W3C XML Schema (`XSD`) from the comfort of your browser.
 
 ## Building
 
