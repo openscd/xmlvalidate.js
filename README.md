@@ -1,4 +1,6 @@
 # xmlvalidate.js
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopenscd%2Fxmlvalidate.js.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopenscd%2Fxmlvalidate.js?ref=badge_shield)
+
 
 Validates `XML` documents against a W3C XML Schema (`XSD`) from the comfort of your browser.
 
@@ -77,3 +79,6 @@ if (window.Worker) {
 Apache 2.0
 
 &copy; 2020 OMICRON electronics GmbH
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fopenscd%2Fxmlvalidate.js.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fopenscd%2Fxmlvalidate.js?ref=badge_large)
