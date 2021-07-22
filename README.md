@@ -4,6 +4,9 @@
 
 Validates `XML` documents against a W3C XML Schema (`XSD`) from the comfort of your browser.
 
+## Dependency
+[Emscripten](https://emscripten.org/)
+
 ## Building
 
 > On POSIX
@@ -71,9 +74,6 @@ if (window.Worker) {
   };
 }
 ```
-
-## Dependency
-[Emscripten](https://emscripten.org/)
 
 ## License
 Apache 2.0
